@@ -1,3 +1,11 @@
+questions = [
+
+    {
+        "text": "What gas do plants absorb during photosynthesis?",
+        "options": ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+        "correct": 2,
+    },
+
 
 def print_welcome_message() -> None:
     print("Welcome to the Holton College Quiz!")
