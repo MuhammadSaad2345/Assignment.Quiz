@@ -8,6 +8,7 @@ def get_questions() -> List[Dict[str, object]]:
     - text
     - options
     - correct (1-based index)
+    - change
     """
 
     questions = [
