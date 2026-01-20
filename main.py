@@ -1,16 +1,38 @@
-"Holton College Digital Quiz System - Console-based quiz application."
-
+import time
+import threading
 from typing import List, Dict
-def get_questions() -> List[Dict[str, object]]:
-    """
-    Return a list of quiz questions grouped into 3 topics.
-    Each question includes:
-    - text
-    - options
-    - correct (1-based index)
-    - change
-    """
 
+TIME_PER_QUESTION = 15  # Seconds per question
+
+
+# -----------------------------
+# TIMER-BASED INPUT FUNCTION
+# -----------------------------
+def timed_input(prompt: str, timeout: int):
+    """
+    Wait for user input for a limited number of seconds.
+    If time runs out, return None.
+    """
+    user_input = []
+
+    def get_input():
+        user_input.append(input(prompt))
+
+    thread = threading.Thread(target=get_input)
+    thread.daemon = True
+    thread.start()
+
+    thread.join(timeout)
+
+    if thread.is_alive():
+        return None  # Time expired
+    return user_input[0]
+
+
+# -----------------------------
+# QUESTIONS
+# -----------------------------
+def get_questions() -> List[Dict[str, object]]:
     questions = [
 
         {
@@ -39,7 +61,6 @@ def get_questions() -> List[Dict[str, object]]:
             "correct": 3,
         },
 
-
         {
             "text": "Which is the largest continent in the world?",
             "options": ["Africa", "Asia", "Europe", "North America"],
@@ -65,7 +86,6 @@ def get_questions() -> List[Dict[str, object]]:
             "options": ["Atlantic", "Indian", "Pacific", "Arctic"],
             "correct": 3,
         },
-
 
         {
             "text": "What does CPU stand for?",
@@ -107,17 +127,42 @@ def get_questions() -> List[Dict[str, object]]:
     return questions
 
 
+# -----------------------------
+# WELCOME MESSAGE
+# -----------------------------
 def print_welcome_message() -> None:
+    print("***********************************")
     print("Welcome to the Holton College Quiz!")
-    print("Please answer with the number (1, 2, 3, or 4) of your choice.\n")
+    print("***********************************")
+    print("Rules:")
+    print(f"1. Each question has {TIME_PER_QUESTION} seconds to answer.")
+    print("2. Enter option number (1-4).")
+    print("3. No negative marking.")
+    print("\nPress ENTER to start the quiz...")
+    input()
 
 
+# -----------------------------
+# ASK QUESTION
+# -----------------------------
 def ask_question(question: Dict[str, object], question_number: int) -> bool:
     print(f"Question {question_number}: {question['text']}")
     for index, option in enumerate(question["options"], start=1):
         print(f"{index}. {option}")
 
-    user_answer = get_valid_answer(len(question["options"]))
+    print(f"You have {TIME_PER_QUESTION} seconds...")
+
+    user_answer = timed_input("Your answer: ", TIME_PER_QUESTION)
+
+    if user_answer is None:
+        print("⏳ Time is over, answer will not be counted.\n")
+        return False
+
+    if not user_answer.isdigit():
+        print("Invalid input. Answer not counted.\n")
+        return False
+
+    user_answer = int(user_answer)
 
     if check_answer(user_answer, question["correct"]):
         print("Correct!\n")
@@ -127,20 +172,16 @@ def ask_question(question: Dict[str, object], question_number: int) -> bool:
     return False
 
 
-def get_valid_answer(num_options: int) -> int:
-    while True:
-        user_input = input("Your answer: ").strip()
-        if user_input.isdigit():
-            answer = int(user_input)
-            if 1 <= answer <= num_options:
-                return answer
-        print(f"Please enter a number between 1 and {num_options}.")
-
-
+# -----------------------------
+# VALIDATION
+# -----------------------------
 def check_answer(user_answer: int, correct_answer: int) -> bool:
     return user_answer == correct_answer
 
 
+# -----------------------------
+# RUN QUIZ
+# -----------------------------
 def run_quiz() -> None:
     questions = get_questions()
     score = 0
@@ -158,6 +199,7 @@ def run_quiz() -> None:
 
 if __name__ == "__main__":
     run_quiz()
+
 
 
 
