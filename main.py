@@ -2,12 +2,8 @@ import time
 import threading
 from typing import List, Dict
 
-TIME_PER_QUESTION = 15  # Seconds per question
+TIME_PER_QUESTION = 10
 
-
-# -----------------------------
-# TIMER-BASED INPUT FUNCTION
-# -----------------------------
 def timed_input(prompt: str, timeout: int):
     """
     Wait for user input for a limited number of seconds.
@@ -28,10 +24,6 @@ def timed_input(prompt: str, timeout: int):
         return None  # Time expired
     return user_input[0]
 
-
-# -----------------------------
-# QUESTIONS
-# -----------------------------
 def get_questions() -> List[Dict[str, object]]:
     questions = [
 
@@ -127,9 +119,6 @@ def get_questions() -> List[Dict[str, object]]:
     return questions
 
 
-# -----------------------------
-# WELCOME MESSAGE
-# -----------------------------
 def print_welcome_message() -> None:
     print("***********************************")
     print("Welcome to the Holton College Quiz!")
@@ -142,9 +131,6 @@ def print_welcome_message() -> None:
     input()
 
 
-# -----------------------------
-# ASK QUESTION
-# -----------------------------
 def ask_question(question: Dict[str, object], question_number: int) -> bool:
     print(f"Question {question_number}: {question['text']}")
     for index, option in enumerate(question["options"], start=1):
@@ -172,16 +158,11 @@ def ask_question(question: Dict[str, object], question_number: int) -> bool:
     return False
 
 
-# -----------------------------
-# VALIDATION
-# -----------------------------
 def check_answer(user_answer: int, correct_answer: int) -> bool:
     return user_answer == correct_answer
 
 
-# -----------------------------
-# RUN QUIZ
-# -----------------------------
+
 def run_quiz() -> None:
     questions = get_questions()
     score = 0
